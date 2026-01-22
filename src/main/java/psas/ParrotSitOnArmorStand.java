@@ -2,10 +2,12 @@ package psas;
 
 import net.fabricmc.api.ModInitializer;
 
+import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.ProblemReporter;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.animal.parrot.Parrot;
 import net.minecraft.world.entity.decoration.ArmorStand;
@@ -26,6 +28,16 @@ public class ParrotSitOnArmorStand implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		LOGGER.info("Parrot Sit on ArmorStand is loading!");
+		UseEntityCallback.EVENT.register(((player, level, interactionHand, entity, entityHitResult) -> {
+			if (entity.getType() == EntityType.ARMOR_STAND && !level.isClientSide()
+					&& (player.getShoulderParrotLeft().isPresent() || player.getShoulderParrotRight().isPresent()
+					|| entity.getPassengers().stream().anyMatch(e -> e.getType() == EntityType.PARROT) && player.isCrouching())
+			) {
+				ParrotSitOnArmorStand.handleParrotTransfer(player, (net.minecraft.world.entity.decoration.ArmorStand) entity);
+				return InteractionResult.SUCCESS;
+			}
+			return InteractionResult.PASS;
+		}));
 	}
 
 	public static void handleParrotTransfer(Player player, ArmorStand armorStand) {

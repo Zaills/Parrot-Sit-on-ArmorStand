@@ -17,17 +17,10 @@
 	"entrypoints": {
 		"main": [
 			"psas.ParrotSitOnArmorStand"
-		],
-		"client": [
-			"psas.ParrotSitOnArmorStandClient"
 		]
 	},
 	"mixins": [
-		"psas.mixins.json",
-		{
-			"config": "psas.client.mixins.json",
-			"environment": "client"
-		}
+		"psas.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.18.1",
