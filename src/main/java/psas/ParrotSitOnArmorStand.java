@@ -53,18 +53,18 @@ public class ParrotSitOnArmorStand implements ModInitializer {
 			ServerPlayerAccessor serverPlayerAccessor = (ServerPlayerAccessor) serverPlayer;
 
 			Parrot newParrotLeft = respawnParrot(serverPlayer.getShoulderEntityLeft(), level, serverPlayer);
-			Parrot newParrotRight = respawnParrot(serverPlayer.getShoulderEntityRight(), level, serverPlayer);
-
-			serverPlayerAccessor.invokeSetShoulderEntityLeft(new CompoundTag());
-			serverPlayerAccessor.invokeSetShoulderEntityRight(new CompoundTag());
-
 			if (newParrotLeft != null) {
 				newParrotLeft.startRiding(armorStand, true, true);
+				serverPlayerAccessor.invokeSetShoulderEntityLeft(new CompoundTag());
 			}
-			if (newParrotRight != null) {
-				newParrotRight.startRiding(armorStand, true, true);
+			else {
+				Parrot newParrotRight = respawnParrot(serverPlayer.getShoulderEntityRight(), level, serverPlayer);
+				if (newParrotRight != null) {
+					newParrotRight.startRiding(armorStand, true, true);
+					serverPlayerAccessor.invokeSetShoulderEntityRight(new CompoundTag());
+				}
 			}
-		} else {
+		} else if (player.isCrouching()) {
 			for (Entity entity : armorStand.getPassengers()) {
 				if (entity instanceof Parrot parrotEntity) {
 					parrotEntity.stopRiding();
